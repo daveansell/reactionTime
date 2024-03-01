@@ -28,9 +28,9 @@ Strip2 = neopixel.NeoPixel(Pin(2), LED_num)
 
 BRIGHTNESS = 1.0
 
-reaction_time = 1  #Typical reaction time for an 85 year old is 1s
-game_time = 5
-celebration_time = 10
+reaction_time = 1000  # ms #Typical reaction time for an 85 year old is 1s
+wait_time = 2000  # ms
+celebration_time = 10000  # ms
 
 # Definitions
 
@@ -63,15 +63,19 @@ def RisingLights():
     
     for j in range (0,i):
         if React1Waiting == True and TooSoon1 == False:
-            brightness = int(j*255/(i*LED_num))
-            Strip1[j]=(0,brightness,0)
-            Strip1.write()
+#            brightness = int(j*255/(i*LED_num))
+#            Strip1[j]=(0,brightness,0)
+            Strip1[j]=(0,255,0)
             j1 = j
         if React2Waiting == True and TooSoon2 == False:
-            brightness = int(j*255/(i*LED_num))
-            Strip2[j]=(0,brightness,0)
-            Strip2.write()
+#            brightness = int(j*255/(i*LED_num))
+#            Strip2[j]=(0,brightness,0)
+            Strip2[j]=(0,255,0)
             j2 = j
+            
+    Strip1.write()
+    Strip2.write()
+            
         
 def Flash(Strip):
     
@@ -86,24 +90,24 @@ def Flash(Strip):
         color = (255, 0, 0)  
         color = set_brightness(color)
         Strip[l]=(color)
-        Strip.write()
-    time.sleep(0.5)
+    Strip.write()
+    time.sleep(0.5) #s
         
             # Display green Strip 1
     for l in range(k,LED_num):    
         color = (0, 255, 0) 
         color = set_brightness(color)
         Strip[l]=(color)
-        Strip.write()
-    time.sleep(0.5)
+    Strip.write()
+    time.sleep(0.5) #s
 
             # Display blue Strip 1
     for l in range(k,LED_num):
         color = (0, 0, 255) 
         color = set_brightness(color)
         Strip[l]=(color)
-        Strip.write()
-    time.sleep(0.5)
+    Strip.write()
+    time.sleep(0.5) #s
         
         
     
@@ -117,10 +121,10 @@ def StripsOff(Strip):
         
 def StopTimer(Strip):
     if (Strip == Strip1):
-        Strip1Time = time.ticks_ms()
+        Strip1Time = time.ticks_ms() #ms
         React1Light.value(0)
     if (Strip == Strip2):
-        Strip2Time = time.ticks_ms()
+        Strip2Time = time.ticks_ms() #ms
         React2Light.value(0)
         
 #def GoButtonDelay():
@@ -137,8 +141,8 @@ def StopTimer(Strip):
     
     
         
-def PreGame_sequence():
-#    print ('PreGame_sequence')
+def VisualPreGame_sequence():
+#    print ('VisualPreGame_sequence')
     
     PreGame_time = True
     
@@ -152,21 +156,21 @@ def PreGame_sequence():
     GoLight.value(0)
     RedLight.value(1)
     
-    waiting_start = time.ticks_ms()
+    waiting_start = time.ticks_ms() #ms
     random_wait = random.randint(3000, 7000)
     
     while PreGame_time == True and GameInProgress == True:
 
         if not GoButton.value():
-            time.sleep(0.2)
+            time.sleep(0.2) #s
             GameInProgress = False
 #            print ('StartButton')
 
-        while time.ticks_ms() - waiting_start < game_time * 1000 and GameInProgress == True:
+        while time.ticks_ms() - waiting_start < wait_time and GameInProgress == True:
             
 
             if not GoButton.value():
-                time.sleep(0.2)
+                time.sleep(0.2) #s
                 GameInProgress = False
 #                print ('StartButton')
             
@@ -180,12 +184,12 @@ def PreGame_sequence():
                 TooSoon2 = True
                 #print ('TooSoon Strip2')
         
-        RedLight.value(1)
+        RedLight.value(0)
         AmberLight.value(1)
     
     
     
-        while time.ticks_ms() - waiting_start < game_time * 1000 + random_wait and GameInProgress == True:
+        while time.ticks_ms() - waiting_start < wait_time + random_wait and GameInProgress == True:
             
             if not GoButton.value():
                 time.sleep(0.2)
@@ -201,9 +205,9 @@ def PreGame_sequence():
                 TooSoon2 = True
         
         
-        if time.ticks_ms() - waiting_start > game_time * 1000 + random_wait:
+        if time.ticks_ms() - waiting_start > wait_time + random_wait:
             
-            RedLight.value(0)
+            
             AmberLight.value(0)
             GreenLight.value(1)
         
@@ -229,27 +233,40 @@ def Game_sequence():
     React1Waiting = True
     React2Waiting = True
 
-    next_LED_time = reaction_time/LED_num/1000
+    next_LED_time = int (reaction_time/LED_num) #ms
+#    print('nextLEDtime')
+#    print(next_LED_time)
     
-    start = time.ticks_ms() #Records the current time
-    
+    start_time = time.ticks_ms() #Records the current time
+#    print('starttime')
+#    print(start_time)
     
     while(ReactWaiting) and GameInProgress == True:
         if not GoButton.value():
-            time.sleep(0.2)
+            time.sleep(0.2) #s
             GameInProgress = False
 #            print ('StartButton')
         global i
         i=1
-        for i in range(LED_num+1): 
-            if not React1Button.value():
-                Strip1Time = time.ticks_ms()
-                React1Waiting = False
-            if not React2Button.value():
-                Strip2Time = time.ticks_ms()
-                React2Waiting = False
+        for i in range(1, LED_num):
+            timeout = start_time + i * next_LED_time
+#            print ('timeout')
+#            print (timeout)
+#            print (i)
             RisingLights()
-            time.sleep(next_LED_time)
+#            print ('time after rising lights')
+ #           print (time.ticks_ms())
+            while time.ticks_ms() < timeout:
+                if not React1Button.value():
+                    Strip1Time = time.ticks_ms()
+                    React1Waiting = False
+                if not React2Button.value():
+                    Strip2Time = time.ticks_ms()
+                    React2Waiting = False
+                pass
+            
+ #       print ('starttime')
+#        print (start_time)
         ReactWaiting = False
 
     if TooSoon1 == True:
@@ -278,13 +295,13 @@ def Celebration_sequence():
         global i
         FlashCounter = 0
         if not GoButton.value():
-            time.sleep(0.2)
+            time.sleep(0.2) #s
             GameInProgress = False
         if React1Waiting == False and TooSoon1 == False:
 #            print ('1Finishes')
             if Strip1Time < Strip2Time:
 #                print ('Strip1Faster')
-                while FlashCounter < celebration_time/3:
+                while FlashCounter < celebration_time/3/1000:
                     Flash(Strip1)
                     FlashCounter = FlashCounter + 1
                 StripsOff(Strip1)
@@ -293,7 +310,7 @@ def Celebration_sequence():
                 GameInProgress = False
             elif Strip1Time == Strip2Time:
 #                print ('EqualTimes')
-                while FlashCounter < celebration_time/3:
+                while FlashCounter < celebration_time/3/1000:
                     Flash(Strip1)
                     Flash(Strip2)
                     FlashCounter = FlashCounter + 1
@@ -303,7 +320,7 @@ def Celebration_sequence():
                 GameInProgress = False
             elif Strip1Time>Strip2Time:
 #                print ('Strip1Faster')
-                while FlashCounter < celebration_time/3:
+                while FlashCounter < celebration_time/3/1000:
                     Flash(Strip2)
                     FlashCounter = FlashCounter + 1
                 StripsOff(Strip1)
@@ -314,7 +331,7 @@ def Celebration_sequence():
         else:
             if React2Waiting == False and TooSoon2 ==False:
 #                print ('2Finishes')
-                while FlashCounter < celebration_time/3:
+                while FlashCounter < celebration_time/3/1000:
                     Flash(Strip2)
                     FlashCounter = FlashCounter + 1
                 StripsOff(Strip1)
@@ -329,7 +346,7 @@ def Celebration_sequence():
     
 def StartGame():
 #    print ('start')
-    PreGame_sequence()
+    VisualPreGame_sequence()
     Game_sequence()
     Celebration_sequence()
     
@@ -356,7 +373,7 @@ Reset()
 
 while GameInProgress == True:
     if not GoButton.value():
-        time.sleep(0.2)
+        time.sleep(0.2) #s
         StartGame()
         Reset()
     GameInProgress = True
