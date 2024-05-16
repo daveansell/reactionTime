@@ -2,7 +2,7 @@ from machine import UART, Pin
 import time
 uarts = [
     UART(0, baudrate=9600, tx=Pin(012), rx=Pin(13)),
-    #UART(1, baudrate=9600, tx=Pin(012), rx=Pin(13))
+    UART(1, baudrate=9600, tx=Pin(08), rx=Pin(9))
     ]
 
 # uart - a uart object
@@ -60,15 +60,27 @@ while 1:
     setDisplayColour(0, "B", "R")
     setDisplayText(0, "B", "L", "boo")
     time.sleep(1)
-    setTrafficLight(0,"B","R")
+    setTrafficLight(1,"B","R")
     time.sleep(1)
     setTrafficLight(0,"B","Y")
     time.sleep(1)
     setTrafficLight(0,"T","G")
     setTrafficLight(0,"B","G")
-    
+    setDisplayText(0, "T", "S", "Croll")
     time.sleep(2)
-    """uart.write("B-I-Y\n")
+        
+    setTrafficLight(1,"T","G")
+    time.sleep(1)
+    setTrafficLight(1,"B","R")
+    time.sleep(1)
+            
+    setDisplayText(1,"B","L","beep")
+    time.sleep(1)
+    setDisplayText(1,"T","R","45")
+    
+    setDisplayText(1, "T", "S", "Scrolling")
+    time.sleep(1)
+    """uart.write("B-I-Y\n")time.sleep(1)
     time.sleep(1.5)
     uart.write("B-I-G\n")
     time.sleep(2)

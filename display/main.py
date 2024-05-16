@@ -126,7 +126,7 @@ def handleCmd(buf):
             half = 0
         else:
             half = 1
-        if parts[1] in ['T','L', 'R', 'I']:
+        if parts[1] in ['T','L', 'R', 'I', 'S']:
             text[half] = parts[2]
             mode[half] = parts[1]
         elif parts[1] == 'C':
@@ -198,6 +198,12 @@ while 1:
         if mode[i]=='T':
             graphics.set_pen(getColour(colours[i]))
             graphics.text(text[0], o[i], ys[i], scale=1.5)
+
+        elif mode[i]=='S':
+            width = graphics.measure_text(text[i], scale=1)
+            graphics.set_pen(getColour(colours[i]))
+            
+            graphics.text(text[0], (o[i]+width)%(width*2+32)-width, ys[i], scale=1.5)
 
         elif mode[i]=='I':
             if text[i]=='G':
