@@ -14,22 +14,37 @@ from machine import Pin, UART
 from rp2 import PIO, StateMachine, asm_pio
 import time
 import interstate75
+import sys
+import machine
+#import gc
+
+#gc.enable()
+#gc.threshold(4096)
+dowdt=False
+
 i75 = interstate75.Interstate75(display=interstate75.DISPLAY_INTERSTATE75_32X32,  panel_type=interstate75.Interstate75.PANEL_FM6126A)
 graphics = i75.display
-
+if dowdt and not i75.switch_pressed(interstate75.SWITCH_A):
+    from machine import WDT
+    wdt = WDT(timeout=2000)  # enable it with a timeout of 2s
+    wdt.feed()
+else:
+    wdt=False
+    
 width = i75.width
 height = i75.height
 devs = 1.0 / height
 UART_BAUD = 9600
+print(UART_BAUD)
 
-text = ['', '']
-mode = ['', '']
+text = ['tree', '']
+mode = ['R', '']
 colours = ["R", "G"]
 
 #HARD_UART_TX_PIN = Pin(4, Pin.OUT)
 PIO_RX_PIN = Pin(20, Pin.IN, Pin.PULL_UP)
 
-INT_PIN = Pin(19, Pin.IN)
+INT_PIN = Pin(19, Pin.IN, Pin.PULL_UP)
 animate = True
 stripe_width = 1.0
 speed = 5.0
@@ -44,10 +59,16 @@ AMBER = graphics.create_pen(150, 130, 0)
 GREEN = graphics.create_pen(0, 255, 0)
 BLUE = graphics.create_pen(0,0,255)
 
+
+
 ys = [3,19]
 
 o=[0,0]
+
+running = True
+
 @micropython.native  # noqa: F821
+
 def draw(offset):
     for x in range(width):
         graphics.set_pen(graphics.create_pen_hsv(devs * x + offset, 1.0, 0.5))
@@ -115,9 +136,10 @@ def handler(sm):
     print("break", time.ticks_ms(), end=" ")
 
 
-# Function for core1 to execute to write to the given UART.
-#def core1_task(uart, text):
- #   uart.write(text)
+
+ 
+ #if we have a command do something with it
+ 
 def handleCmd(buf):
     global text, mode,o
     parts = buf.split('-')
@@ -132,8 +154,12 @@ def handleCmd(buf):
         elif parts[1] == 'C':
             if parts[2] in ['R', 'G', 'Y', 'P', 'W', 'L', 'B']:
                 colours[half] = parts[2]
+        elif parts[1] == 'c':
+            mode[half] = ''
+            text[half] = ''
         o[half]=32
 
+# get colour object from letter code
 def getColour(colour):
     if colour=='R':
         return RED
@@ -151,6 +177,8 @@ def getColour(colour):
 # Set up the hard UART we're going to use to print characters.
 #uart = UART(1, UART_BAUD, tx=HARD_UART_TX_PIN)
 def readSerial():
+        global running, wdt
+        #print("readserial running="+str(running))
  #   for pio_prog in ("uart_rx"):#_mini", "uart_rx"):
     # Set up the state machine we're going to use to receive the characters.
         sm = StateMachine(
@@ -160,78 +188,103 @@ def readSerial():
             in_base=PIO_RX_PIN,  # For WAIT, IN
             jmp_pin=PIO_RX_PIN,  # For JMP
         )
-        sm.irq(handler)
+        #sm.irq(handler)
         sm.active(1)
 
         buf = ''
-        while 1:#sm.rx_fifo()>0:
-            b = sm.get() >> 24
-            c = chr(b)
+        while running:#sm.rx_fifo()>0:
+            if wdt:
+                wdt.feed()
+            try:
+                if sm.rx_fifo()>0:
+                    b = sm.get() >> 24
+                    c = chr(b)
             #print(c+" "+str(b))
-            if b == 10:
-                print(buf)
-                handleCmd(buf)
-                buf=''
+                    if b == 10:
+                        #print(buf)
+                        handleCmd(buf)
+                        buf=''
                 
-            else:
-                buf += c
+                    else:
+                        buf += c
+            except:
+                pass
+ #           gc.collect() 
             #print(chr(sm.get() >> 24), end="")
     # Tell core 1 to print some text to UART 1
 #    text = "Hello, world from PIO, using {}!".format(pio_prog)
  #   _thread.start_new_thread(core1_task, (uart, text))
-second_thread = _thread.start_new_thread(readSerial, ())
+
     # Echo characters received from PIO to the console.
 
-while 1:
-#        if  animate:
- #           phase += speed
+def main():
+    global running
+    second_thread = _thread.start_new_thread(readSerial, ())
+#    mode[1]='T'
+#    text[1]='Test'
+#    colours[1]='R'
+#    o[1]=32
+#    print("running="+str(running))
+    while(running):
+        if INT_PIN.value()==0:
+            machine.reset()
+        graphics.set_pen(BLACK)
+        graphics.clear()
+        graphics.set_font("bitmap8")
+        for i in range(0,2):
+            if mode[i]=='T':
+                graphics.set_pen(getColour(colours[i]))
+                graphics.text(text[i], o[i], ys[i], scale=1.5)
 
-  #          start = time.ticks_ms()
-   #         offset += 0.05
+            elif mode[i]=='S':
+                width = graphics.measure_text(text[i], scale=1)
+                graphics.set_pen(getColour(colours[i]))
             
-    #        draw(offset)
-    graphics.set_pen(BLACK)
-    graphics.clear()
-    graphics.set_font("bitmap8")
-    
-    for i in range(0,2):
-        if mode[i]=='T':
-            graphics.set_pen(getColour(colours[i]))
-            graphics.text(text[0], o[i], ys[i], scale=1.5)
+                graphics.text(text[0], (o[i]+width)%(width*2+32)-width, ys[i], scale=1.5)
 
-        elif mode[i]=='S':
-            width = graphics.measure_text(text[i], scale=1)
-            graphics.set_pen(getColour(colours[i]))
-            
-            graphics.text(text[0], (o[i]+width)%(width*2+32)-width, ys[i], scale=1.5)
+            elif mode[i]=='I':
+                if text[i]=='G':
+                    graphics.set_pen(GREEN)
+                    r=7
+                elif text[i]=="Y":
+                    graphics.set_pen(AMBER)
+                    r=6
+                else:
+                    graphics.set_pen(RED)
+                    r=6
+                graphics.circle(16,16*i+7,r)
+            elif mode[i]=='L':
+                graphics.set_pen(getColour(colours[i]))
+                graphics.text(text[i], 1, ys[i], scale=1)
+            elif mode[1]=='R':
+                graphics.set_pen(getColour(colours[i]))
+                width = graphics.measure_text(text[i], scale=1)#, spacing, fixed_width)
 
-        elif mode[i]=='I':
-            if text[i]=='G':
-                graphics.set_pen(GREEN)
-                r=7
-            elif text[i]=="Y":
-                graphics.set_pen(AMBER)
-                r=6
-            else:
-                graphics.set_pen(RED)
-                r=6
-            graphics.circle(16,16*i+7,r)
-        elif mode[i]=='L':
-            graphics.set_pen(getColour(colours[i]))
-            graphics.text(text[i], 1, ys[i], scale=1)
-        elif mode[1]=='R':
-            graphics.set_pen(getColour(colours[i]))
-            width = graphics.measure_text(text[i], scale=1)#, spacing, fixed_width)
-
-            graphics.text(text[i], 32-width, ys[i], scale=1)
-    i75.update(graphics)
-    time.sleep(0.02)
-    o[0]-=1
-    o[1]-=1
+                graphics.text(text[i], 32-width, ys[i], scale=1)
+        i75.update(graphics)
+        time.sleep(0.02)
+        o[0]-=1
+        o[1]-=1
      #   scroll(line1)
       #  scroll(line2)
     #reverse_scroll(line2)
      #   display.refresh(minimum_frames_per_second=0)
     #print()
 
+
+try:
+    
+        main()
+except KeyboardInterrupt as err:
+    
+    print("Keyboard Interrupt")
+finally:
+    running=False
+    print("stopping")
+    time.sleep(0.5)
+  #  global running
+    print("clear 2")
+    
+    #sys.exit()
+running=False
 print("end")
