@@ -1,5 +1,9 @@
 from machine import UART, Pin
 import time
+# Displays are 0 and 1
+# Top and bottom halves are T and B
+# Colours are RGB, Y Yellow, W White, L Black
+# Text modes are L left justify, R right justify, S Scroll and T Scroll once
 uarts = [
     UART(0, baudrate=9600, tx=Pin(012), rx=Pin(13)),
     UART(1, baudrate=9600, tx=Pin(08), rx=Pin(9))

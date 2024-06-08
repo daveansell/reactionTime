@@ -36,7 +36,7 @@ message_column = message_length*8
 
 # LED strips
 
-LED_num = 20
+LED_num = 60
 BRIGHTNESS = 1.0
 
 LED_interval = int (reaction_time/LED_num) #ms Calculates the time per LED as the lights rise
@@ -60,15 +60,15 @@ AudioMatrixBrightness = 10
 
 VisualGoButton = Pin(9, mode=Pin.IN, pull=Pin.PULL_UP)
 AudioGoButton = Pin(27,mode=Pin.IN, pull=Pin.PULL_UP)
-React1Button = Pin (8, mode=Pin.IN, pull=Pin.PULL_UP) 
-React2Button = Pin(7, mode=Pin.IN, pull=Pin.PULL_UP)
+React1Button = Pin(6, mode=Pin.IN, pull=Pin.PULL_UP) 
+React2Button = Pin(8, mode=Pin.IN, pull=Pin.PULL_UP)
 
 # Button lights
 
 VisualGoLight = Pin(17, Pin.OUT)
 AudioGoLight = Pin(11, Pin.OUT)
 React1Light = Pin(10, Pin.OUT)
-React2Light = Pin(6, Pin.OUT)
+React2Light = Pin(10, Pin.OUT)
 
 # Traffic lights
 
@@ -85,29 +85,29 @@ speaker = Speaker(16)
 # Set up the LED strips
 
 StripVisual1 = neopixel.NeoPixel(Pin(2), LED_num) #Visual1
-StripVisual2 = neopixel.NeoPixel(Pin(3), LED_num) #Visual2
-StripAudio1 = neopixel.NeoPixel(Pin(4), LED_num) #Audio1
+StripVisual2 = neopixel.NeoPixel(Pin(4), LED_num) #Visual2
+StripAudio1 = neopixel.NeoPixel(Pin(3), LED_num) #Audio1
 StripAudio2 = neopixel.NeoPixel(Pin(5), LED_num) #Audio2
 
 #Set up the text displays
 
 spiVisual1 = SPI(0,sck=Pin(18),mosi=Pin(19))
-csVisual1 = Pin(20, Pin.OUT)
+csVisual1 = Pin(21, Pin.OUT)
 displayVisual1 = max7219.Matrix8x8(spiVisual1, csVisual1, 4)
 displayVisual1.brightness(VisualMatrixBrightness)
 
 spiVisual2 = SPI(0,sck=Pin(18),mosi=Pin(19))
-csVisual2 = Pin(22, Pin.OUT)
+csVisual2 = Pin(26, Pin.OUT)
 displayVisual2 = max7219.Matrix8x8(spiVisual2, csVisual2, 4)
 displayVisual2.brightness(VisualMatrixBrightness)
 
 spiAudio1 = SPI(0,sck=Pin(18),mosi=Pin(19))
-csAudio1 = Pin(21, Pin.OUT)
+csAudio1 = Pin(20, Pin.OUT)
 displayAudio1 = max7219.Matrix8x8(spiAudio1, csAudio1, 4)
 displayAudio1.brightness(AudioMatrixBrightness)
 
 spiAudio2 = SPI(0,sck=Pin(18),mosi=Pin(19))
-csAudio2 = Pin(26, Pin.OUT)
+csAudio2 = Pin(22, Pin.OUT)
 displayAudio2 = max7219.Matrix8x8(spiAudio2, csAudio2, 4)
 displayAudio2.brightness(AudioMatrixBrightness)
 
@@ -117,8 +117,13 @@ displayAudio2.brightness(AudioMatrixBrightness)
 
 # Set inital flags etc
 GameInProgress = True
+PreGame_time = False
 VisualGameInProgress = False
 AudioGameInProgress = False
+ReactWaiting = False
+Celebrating = False
+
+
 TooSoon1 = False
 TooSoon2 = False
 TooSlow1 = False
@@ -133,18 +138,6 @@ React1Waiting = False
 React2Waiting = False
 
 Celebrating = False
-
-def wait_pin_change(pin):
-    # wait for pin to change value
-    # it needs to be stable for a continuous 20ms
-    cur_value = pin.value()
-    active = 0
-    while active < 20:
-        if pin.value() != cur_value:
-            active += 1
-        else:
-            active = 0
-        pyb3.delay(1)
 
 def set_brightness(color):
     r, g, b = color
@@ -277,14 +270,17 @@ def Matrices():
     global scrolling_messageSoon
     global scrolling_messageSlow
     global message_length
+    global PreGame_time
     
     
     while VisualGameInProgress == True:
         if not VisualGoButton.value():
             time.sleep(0.4) #s
+            max7219.init()
             VisualGameInProgress = False
         if not AudioGoButton.value():
             time.sleep(0.4) #s
+            max7219.init()
             VisualGameInProgress = False
 
         display1 = displayVisual1
@@ -304,22 +300,41 @@ def Matrices():
         #Clear the display
         # Write the scrolling text in to frame buffer
         #Display the message
+        
+            if not React1Button.value():
+                time.sleep(0.4) #s
+                VisualTime_output()
+            if not React2Button.value():
+                time.sleep(0.4) #s
+                VisualTime_output()
+                
+            if PreGame_time == True:
+                display1.fill(0)
+                display2.fill(0)
+                display1.show()
+                display2.show()
+                print ('Blank')
+        
             if TooSoon1 == True: 
                 display1.fill(0)
                 display1.text(scrolling_messageSoon,x,0,1)
                 display1.show()
+                print ('TooSoon1')
             if TooSoon2 == True: 
                 display2.fill(0)
                 display2.text(scrolling_messageSoon,x,0,1)
                 display2.show()
+                print ('TooSoon2')
             if TooSlow1 == True: 
                 display1.fill(0)
                 display1.text(scrolling_messageSlow,x,0,1)
                 display1.show()
+                print ('TooSlow2')
             if TooSlow2 == True: 
                 display2.fill(0)
                 display2.text(scrolling_messageSlow,x,0,1)
                 display2.show()
+                print ('TooSlow2')
 
             time.sleep(ScrollPause)
         
@@ -345,6 +360,22 @@ def Matrices():
 
         for x in range(32, -message_column, -1):     
         #Clear the display
+            
+            
+            if not React1Button.value():
+                time.sleep(0.4) #s
+                AudioTime_output()
+            if not React2Button.value():
+                time.sleep(0.4) #s
+                AudioTime_output()
+                
+            if PreGame_time == True:
+                display1.fill(0)
+                display2.fill(0)
+                display1.show()
+                display2.show()
+                print ('Blank')
+                
         # Write the scrolling text in to frame buffer
         #Display the message
             if TooSoon1 == True: 
@@ -367,17 +398,17 @@ def Matrices():
             time.sleep(ScrollPause)        
                 
                 
-def TimeMatrix(Display,Timer):
-    Display.fill(0)
-    Display.text('{0:04d}'.format(Timer),0,0,1)
-    Display.show()
+#def TimeMatrix(Display,Timer):
+#    Display.fill(0)
+#    Display.text('{0:04d}'.format(Timer),0,0,1)
+#    Display.show()
     
 
     
     
-def BlankDisplay(Display):
-    Display.fill(0)
-    Display.show()
+#def BlankDisplay(Display):
+#    Display.fill(0)
+#    Display.show()
 
 #Timer (I don't think this is in use at the moment..)
 
@@ -419,8 +450,6 @@ def VisualPreGame_sequence():
     
     StripsOff(StripVisual1)
     StripsOff(StripVisual2)
-    BlankDisplay(displayVisual1)
-    BlankDisplay(displayVisual2)
     
     VisualGoButton.value(0)
     AudioGoButton.value(0)
@@ -546,12 +575,15 @@ def VisualTime_output():
         displayVisual1.fill(0)
         displayVisual1.text('{0:04d}'.format(VisualTime1),0,0,1)
         displayVisual1.show()
+        print ('VisualTime1')
+        print ('{0:04d}'.format(VisualTime1))
 
     if VisualTime2 is not None:
         displayVisual2.fill(0)
         displayVisual2.text('{0:04d}'.format(VisualTime2),0,0,1)
         displayVisual2.show()
-    
+        print ('VisualTime2')
+        print ('{0:04d}'.format(VisualTime2))
     
 def VisualCelebration_sequence():
 
@@ -650,8 +682,6 @@ def AudioPreGame_sequence():
     
     StripsOff(StripAudio1)
     StripsOff(StripAudio2)
-    BlankDisplay(displayAudio1)
-    BlankDisplay(displayAudio2)
 
     speaker.play('c4', 0.1) # play the middle c for 0.1 seconds
     print ('Beep1')
@@ -788,11 +818,16 @@ def AudioTime_output():
         displayAudio1.fill(0)
         displayAudio1.text('{0:04d}'.format(AudioTime1),0,0,1)
         displayAudio1.show()
+        print ('AudioTime1')
+        print ('{0:04d}'.format(AudioTime1))
 
     if AudioTime2 is not None:
         displayAudio2.fill(0)
         displayAudio2.text('{0:04d}'.format(AudioTime2),0,0,1)
-        displayAudio2.show() 
+        displayAudio2.show()
+        print ('AudioTime2')
+        print ('{0:04d}'.format(AudioTime2))
+        
 
  
 
@@ -882,8 +917,8 @@ def StartVisualGame():
     VisualPreGame_sequence()
     print ('Visual Game Sequence')
     VisualGame_sequence()
-    print ('Time output')
-    VisualTime_output()
+#    print ('Time output')
+#    VisualTime_output()
     print ('Visual Celebration Sequence')
     VisualCelebration_sequence()
     
@@ -892,8 +927,8 @@ def StartAudioGame():
     AudioPreGame_sequence()
     print ('Audio Game Sequence')
     AudioGame_sequence()
-    print ('Time output')
-    AudioTime_output()
+#    print ('Time output')
+#    AudioTime_output()
     print ('Audio Celebration Sequence')
     AudioCelebration_sequence()    
 
@@ -933,11 +968,6 @@ def FullReset():
     RedLight.value(0)
     AmberLight.value(0)
     GreenLight.value(0)
-    
-    BlankDisplay(displayVisual1)
-    BlankDisplay(displayVisual2)
-    BlankDisplay(displayAudio1)
-    BlankDisplay(displayAudio2)
     
     VisualTime1 = None
     VisualTime2 = None

@@ -57,7 +57,7 @@ TooSlow1 = False
 TooSlow2 = True
 
 #Set the scrolling speed
-ScrollPause = 0.5
+ScrollPause = 0.05
 
 #Define the scrolling message
 scrolling_messageSoon = "For tidlig"
@@ -75,8 +75,8 @@ column = (length * 8)
 
 while True:
     while VisualGameInProgress == True:
-        display1 = displayVisual1
-        display2 = displayVisual2
+        display1 = displayAudio1
+        display2 = displayAudio2
                 
         if TooSoon1 == True or TooSlow1 == True:   
             display1.fill(0)
@@ -84,7 +84,7 @@ while True:
         
         if TooSoon2 == True or TooSlow2 == True:
             display2.fill(0)
-            display2.show(0)
+            display2.show()
         
         time.sleep(ScrollPause)
 
@@ -146,4 +146,4 @@ while True:
                 display2.text(scrolling_messageSlow,x,0,1)
                 display2.show()
 
-            time.sleep(0.05)
+            time.sleep(ScrollPause)
