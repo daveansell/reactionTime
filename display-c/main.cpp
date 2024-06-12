@@ -156,7 +156,7 @@ int main() {
 			case MODE_SCROLL:
 				txtWidth = graphics.measure_text(strings[i], 2.0f);
 				graphics.set_pen(context.mem[o+RED], context.mem[o+GREEN], context.mem[o+BLUE]);
-				graphics.text(strings[i], Point(-txtWidth+(offsets[i]+hub75.width+txtWidth), y), 255, 2.0f);
+				graphics.text(strings[i], Point(-txtWidth+(offsets[i]+hub75.width+txtWidth), y), 2000, 2.0f);
 //offsets[i] ++;
 				if(offsets[i] < - (hub75.width+txtWidth)){
 					offsets[i]=0;

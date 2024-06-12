@@ -7,7 +7,7 @@ import utime as time
 import max7219 
 from picozero import Speaker
 import _thread
-
+import i2c_comms
 
 # Set up the key variables we might want to tune
 
