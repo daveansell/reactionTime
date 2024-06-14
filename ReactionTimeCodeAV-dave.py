@@ -275,72 +275,72 @@ def Displays():
     while VisualGameInProgress == True:
         
         if PreGame_time == True:
-            sendText(0, 0, GREEN, MODE_SCROLL, scrolling_messageVisualWait, scrollspeed=2)
             sendText(1, 0, GREEN, MODE_SCROLL, scrolling_messageVisualWait, scrollspeed=2)
-            sendTraffic(0, 1, C_RED, radius=7)
+            sendText(2, 0, GREEN, MODE_SCROLL, scrolling_messageVisualWait, scrollspeed=2)
             sendTraffic(1, 1, C_RED, radius=7)
+            sendTraffic(2, 1, C_RED, radius=7)
             
             while RedLight == True:
                 if not React1Button.value(): 
-                    sendText(0, 0, C_RED, MODE_SCROLL, scrolling_messageSoon, scrollspeed=2)
+                    sendText(1, 0, C_RED, MODE_SCROLL, scrolling_messageSoon, scrollspeed=2)
                 
                 if not React2Button.value():
-                    sendText(1, 0, C_RED, MODE_SCROLL, scrolling_messageSoon, scrollspeed=2)
+                    sendText(2, 0, C_RED, MODE_SCROLL, scrolling_messageSoon, scrollspeed=2)
                     
                 time.sleep(0.01)
                     
-            sendTraffic(0, 1, C_YELLOW, radius=7)
             sendTraffic(1, 1, C_YELLOW, radius=7)
+            sendTraffic(2, 1, C_YELLOW, radius=7)
                 
             while AmberLight == True:
                 if not React1Button.value(): 
-                    sendText(0, 0, C_RED, MODE_SCROLL, scrolling_messageSoon, scrollspeed=2)
+                    sendText(1, 0, C_RED, MODE_SCROLL, scrolling_messageSoon, scrollspeed=2)
                 
                 if not React2Button.value():
-                    sendText(1, 0, C_RED, MODE_SCROLL, scrolling_messageSoon, scrollspeed=2)
+                    sendText(2, 0, C_RED, MODE_SCROLL, scrolling_messageSoon, scrollspeed=2)
 
                 time.sleep(0.01)
                 
                 
         if ReactWaiting == True:
             
-            sendTraffic(0, 1, GREEN, radius=8)
             sendTraffic(1, 1, GREEN, radius=8)
+            sendTraffic(2, 1, GREEN, radius=8)
             
             while ReactWaiting == True:
             
                 if not React1Button.value():
                     if VisualTime1 is not None:
-                        sendText(0, 1, GREEN, MODE_RTEXT, str(VisualTime1), scrollspeed=2)
+                        sendText(1, 1, GREEN, MODE_RTEXT, str(VisualTime1), scrollspeed=2)
                 
                 if not React2Button.value():
                     if VisualTime1 is not None:
-                        sendText(1, 1, GREEN, MODE_RTEXT, str(VisualTime2), scrollspeed=2)
+                        sendText(2, 1, GREEN, MODE_RTEXT, str(VisualTime2), scrollspeed=2)
                     
         if Celebrating == True:
             if TooSlow1 == True:
-                sendText(0, 0, C_RED, MODE_RTEXT, scrolling_messageSlow, scrollspeed=2)
+                sendText(1, 0, C_RED, MODE_RTEXT, scrolling_messageSlow, scrollspeed=2)
             if TooSoon1 == True:
-                sendText(0, 0, C_RED, MODE_RTEXT, scrolling_messageSoon, scrollspeed=2)
+                sendText(1, 0, C_RED, MODE_RTEXT, scrolling_messageSoon, scrollspeed=2)
             if TooSoon1 == False and TooSlow1 == False:
-                sendText(0, 0, GREEN, MODE_RTEXT, str(VisualTime1), scrollspeed=2)
+                sendText(1, 0, GREEN, MODE_RTEXT, str(VisualTime1), scrollspeed=2)
                 
             if TooSlow2 == True:
-                sendText(1, 0, C_RED, MODE_RTEXT, scrolling_messageSlow, scrollspeed=2)
+                sendText(2, 0, C_RED, MODE_RTEXT, scrolling_messageSlow, scrollspeed=2)
             if TooSoon2 == True:
-                sendText(1, 0, C_RED, MODE_RTEXT, scrolling_messageSoon, scrollspeed=2)
+                sendText(2, 0, C_RED, MODE_RTEXT, scrolling_messageSoon, scrollspeed=2)
             if TooSoon2 == False and TooSlow2 == False:
-                sendText(1, 0, GREEN, MODE_RTEXT, str(VisualTime2), scrollspeed=2)
+                sendText(2, 0, GREEN, MODE_RTEXT, str(VisualTime2), scrollspeed=2)
                     
             if AudioTime1 is not None: 
-                sendText(0, 0, C_BLUE, MODE_RTEXT, str(AudioTime1), scrollspeed=2)
-            else:
-                sendClear(0, 0)
-                
-            if AudioTime2 is not None: 
-                sendText(1, 0, C_BLUE, MODE_RTEXT, str(AudioTime2), scrollspeed=2)
+                sendText(1, 0, C_BLUE, MODE_RTEXT, str(AudioTime1), scrollspeed=2)
             else:
                 sendClear(1, 0)
+                
+            if AudioTime2 is not None: 
+                sendText(2, 0, C_BLUE, MODE_RTEXT, str(AudioTime2), scrollspeed=2)
+            else:
+                sendClear(2, 0)
                                 
             while Celebrating == True:
                 time.sleep(0.1)
@@ -350,18 +350,18 @@ def Displays():
     while AudioGameInProgress == True:
                               
         if PreGame_time == True:
-            sendText(0, 0, C_BLUE, MODE_SCROLL, scrolling_messageAudioWait, scrollspeed=2)
             sendText(1, 0, C_BLUE, MODE_SCROLL, scrolling_messageAudioWait, scrollspeed=2)
-            sendClear(0,1) 
+            sendText(2, 0, C_BLUE, MODE_SCROLL, scrolling_messageAudioWait, scrollspeed=2)
             sendClear(1,1) 
+            sendClear(2,1) 
             
             while PreGame_time == True:
             
                 if not React1Button.value(): # if the value changes
-                    sendText(0, 0, C_RED, MODE_SCROLL, scrolling_messageSoon, scrollspeed=2)
+                    sendText(1, 0, C_RED, MODE_SCROLL, scrolling_messageSoon, scrollspeed=2)
                     
                 if not React2Button.value(): # if the value changes
-                    sendText(1, 0, C_RED, MODE_SCROLL, scrolling_messageSoon, scrollspeed=2)
+                    sendText(2, 0, C_RED, MODE_SCROLL, scrolling_messageSoon, scrollspeed=2)
                 
                 
         if ReactWaiting == True:
@@ -370,36 +370,36 @@ def Displays():
             
                 if not React1Button.value():
                     if AudioTime1 is not None:
-                        sendText(0, 1, C_BLUE, MODE_RTEXT, str(AudioTime1), scrollspeed=2)
+                        sendText(1, 1, C_BLUE, MODE_RTEXT, str(AudioTime1), scrollspeed=2)
                 
                 if not React2Button.value():
                     if AudioTime2 is not None:
-                        sendText(1, 1, C_BLUE, MODE_RTEXT, str(AudioTime2), scrollspeed=2)
+                        sendText(2, 1, C_BLUE, MODE_RTEXT, str(AudioTime2), scrollspeed=2)
                     
         if Celebrating == True:
             if TooSoon1 == True:
-                sendText(0, 1, C_RED, MODE_SCROLL, scrolling_messageSoon, scrollspeed=2)
+                sendText(1, 1, C_RED, MODE_SCROLL, scrolling_messageSoon, scrollspeed=2)
             if TooSlow1 == True:
-                sendText(0, 1, C_RED, MODE_SCROLL, scrolling_messageSlow, scrollspeed=2)
+                sendText(1, 1, C_RED, MODE_SCROLL, scrolling_messageSlow, scrollspeed=2)
             if TooSlow1 == False and TooSoon1 == False:
-                sendText(0, 1, C_BLUE, MODE_RTEXT, str(AudioTime1), scrollspeed=2)
+                sendText(1, 1, C_BLUE, MODE_RTEXT, str(AudioTime1), scrollspeed=2)
                 
             if TooSoon2 ==True:
-                sendText(1, 1, C_RED, MODE_SCROLL, scrolling_messageSoon, scrollspeed=2)
+                sendText(2, 1, C_RED, MODE_SCROLL, scrolling_messageSoon, scrollspeed=2)
             if TooSlow2 == True:
-                sendText(1, 1, C_RED, MODE_SCROLL, scrolling_messageSlow, scrollspeed=2)
+                sendText(2, 1, C_RED, MODE_SCROLL, scrolling_messageSlow, scrollspeed=2)
             if TooSlow2 == False and TooSoon2 == False:
-                sendText(1, 1, C_BLUE, MODE_RTEXT, str(AudioTime1), scrollspeed=2)
+                sendText(2, 1, C_BLUE, MODE_RTEXT, str(AudioTime1), scrollspeed=2)
             
             if VisualTime1 is not None: 
-                sendText(0, 1, GREEN, MODE_RTEXT, str(VisualTime1), scrollspeed=2)
-            else:
-                sendClear(0,1)
-                
-            if VisualTime2 is not None: 
-                sendText(1, 1, GREEN, MODE_RTEXT, str(VisualTime2), scrollspeed=2)
+                sendText(1, 1, GREEN, MODE_RTEXT, str(VisualTime1), scrollspeed=2)
             else:
                 sendClear(1,1)
+                
+            if VisualTime2 is not None: 
+                sendText(2, 1, GREEN, MODE_RTEXT, str(VisualTime2), scrollspeed=2)
+            else:
+                sendClear(2,1)
 
             while Celebrating == True:
                 time.sleep(0.1)
@@ -408,32 +408,32 @@ def Displays():
         
         if GameResetFlagVisual == True:
             if VisualTime1 is None: 
-                sendText(0, 0, C_WHITE, MODE_SCROLL, scrolling_messageTryAgain, scrollspeed=2)
-            else:
-                sendText(0, 0, C_GREEN, MODE_RTEXT, str(VisualTime1), scrollspeed=2)
-    
-            if VisualTime2 is None: 
                 sendText(1, 0, C_WHITE, MODE_SCROLL, scrolling_messageTryAgain, scrollspeed=2)
             else:
-                sendText(1, 0, C_GREEN, MODE_RTEXT, str(VisualTime2), scrollspeed=2)
+                sendText(1, 0, C_GREEN, MODE_RTEXT, str(VisualTime1), scrollspeed=2)
+    
+            if VisualTime2 is None: 
+                sendText(2, 0, C_WHITE, MODE_SCROLL, scrolling_messageTryAgain, scrollspeed=2)
+            else:
+                sendText(2, 0, C_GREEN, MODE_RTEXT, str(VisualTime2), scrollspeed=2)
         else:
-            sendText(0, 0, C_GREEN, MODE_SCROLL, str("scrolling_messageNewVisual"), scrollspeed=2)
-            sendText(1, 0, C_GREEN, MODE_SCROLL, str("scrolling_messageNewVisual"), scrollspeed=2)
+            sendText(1, 0, C_GREEN, MODE_SCROLL, str(scrolling_messageNewVisual), scrollspeed=2)
+            sendText(2, 0, C_GREEN, MODE_SCROLL, str(scrolling_messageNewVisual), scrollspeed=2)
                
         if GameResetFlagAudio == True:
             if AudioTime1 is None: 
-                sendText(0, 1, C_BLUE, MODE_SCROLL, scrolling_messageTryAgain, scrollspeed=2)
-            else:
-                sendText(0, 1, C_BLUE, MODE_RTEXT, str(AudioTime1), scrollspeed=2)
-    
-            if AudioTime2 is None: 
                 sendText(1, 1, C_BLUE, MODE_SCROLL, scrolling_messageTryAgain, scrollspeed=2)
             else:
-                sendText(1, 1, C_BLUE, MODE_RTEXT, str(AudioTime2), scrollspeed=2)
+                sendText(1, 1, C_BLUE, MODE_RTEXT, str(AudioTime1), scrollspeed=2)
+    
+            if AudioTime2 is None: 
+                sendText(2, 1, C_BLUE, MODE_SCROLL, scrolling_messageTryAgain, scrollspeed=2)
+            else:
+                sendText(2, 1, C_BLUE, MODE_RTEXT, str(AudioTime2), scrollspeed=2)
                 
         else:
-            sendText(0, 1, C_BLUE, MODE_SCROLL, str("scrolling_messageNewAudio"), scrollspeed=2)
-            sendText(1, 1, C_BLUE, MODE_SCROLL, str("scrolling_messageNewAudio"), scrollspeed=2)
+            sendText(1, 1, C_BLUE, MODE_SCROLL, str(scrolling_messageNewAudio), scrollspeed=2)
+            sendText(2, 1, C_BLUE, MODE_SCROLL, str(scrolling_messageNewAudio), scrollspeed=2)
 
   
  
@@ -1030,10 +1030,10 @@ def FullReset():
     jAudio1 = 0
     jAudio2 = 0
    # resetDisplays()
-    sendText(0, 0, C_WHITE, MODE_SCROLL, scrolling_messageNewGame, scrollspeed=2)
     sendText(1, 0, C_WHITE, MODE_SCROLL, scrolling_messageNewGame, scrollspeed=2)
-    sendClear(0,1)
+    sendText(2, 0, C_WHITE, MODE_SCROLL, scrolling_messageNewGame, scrollspeed=2)
     sendClear(1,1)
+    sendClear(2,1)
 
     
     LastResetTime = time.ticks_ms()

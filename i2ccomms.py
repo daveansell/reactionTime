@@ -95,20 +95,26 @@ def reg_read(i2c, addr, reg, nbytes=1):
 # Main
 
 def setColour(side, half, colour):
-    if side==0:
-        reg_write(i2c, ADXL343_ADDR, RED+128*half, colour)
+    if len(colour) != 3:
+        print("should have 3 parts of a colour have "+str(colour))
+        return
     if side==1:
+        reg_write(i2c, ADXL343_ADDR, RED+128*half, colour)
+    if side==2:
         reg_write(i2c1, ADXL343_ADDR, RED+128*half, colour)
 
 def sendText(side, half, colour, mode, text, scrollspeed=2):
-    if side==0:
+    if len(colour) != 3:
+        print("should have 3 parts of a colour have "+str(colour))
+        return
+    if side==1:
         reg_write(i2c, ADXL343_ADDR, RED+128*half, colour)
         reg_write(i2c, ADXL343_ADDR, STRLEN, len(text))
         reg_write(i2c, ADXL343_ADDR, STR, text)
         reg_write(i2c, ADXL343_ADDR, MODE, mode)
         reg_write(i2c, ADXL343_ADDR, SCROLLSPEED, scrollspeed)
         reg_write(i2c, ADXL343_ADDR, SCROLLPOS,0)
-    elif side==1:
+    elif side==2:
         reg_write(i2c1, ADXL343_ADDR, RED+128*half, colour)
         reg_write(i2c1, ADXL343_ADDR, STRLEN, len(text))
         reg_write(i2c1, ADXL343_ADDR, STR, text)
@@ -117,18 +123,21 @@ def sendText(side, half, colour, mode, text, scrollspeed=2):
         reg_write(i2c1, ADXL343_ADDR, SCROLLPOS,0)
         
 def sendTraffic(side, half, colour, radius=7):
-    if side==0:
+    if len(colour) != 3:
+        print("should have 3 parts of a colour have "+str(colour))
+        return
+    if side==1:
         reg_write(i2c, ADXL343_ADDR, RED+128*half, colour)
         reg_write(i2c, ADXL343_ADDR, RADIUS+128*half, radius)
         reg_write(i2c, ADXL343_ADDR, MODE+128*half, MODE_TRAFFIC)
-    elif side==1:
+    elif side==2:
         reg_write(i2c1, ADXL343_ADDR, RED+128*half, colour)
         reg_write(i2c1, ADXL343_ADDR, RADIUS+128*half, radius)
         reg_write(i2c1, ADXL343_ADDR, MODE+128*half, MODE_TRAFFIC)
         
 def sendClear(side, half):
-    if side==0:
+    if side==1:
         reg_write(i2c, ADXL343_ADDR, MODE+128*half, MODE_BLANK)
-    elif side==1:
+    elif side==2:
         reg_write(i2c1, ADXL343_ADDR, MODE+128*half, MODE_BLANK)
 
