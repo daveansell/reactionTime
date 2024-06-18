@@ -891,8 +891,6 @@ def Reset():
     
     LastResetTime = time.ticks_ms()
     
-    
-
 
 def FullReset():
     print ('Full Reset')
