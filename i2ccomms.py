@@ -24,7 +24,8 @@ RADIUS = 6
 SCROLLPOS = 7
 SCROLLSPEED = 8
 STRLEN = 9
-STR    = 10
+SIZE   = 10
+STR    = 11
 
 C_RED=[255,0,0]
 C_YELLOW = [180,180,0]
@@ -108,13 +109,15 @@ def readColour(side, half):
         return reg_read(i2c, ADXL343_ADDR, RED+128*half, 3)
     else:
         return reg_read(i2c1, ADXL343_ADDR, RED+128*half, 3)
-def sendText(side, half, colour, mode, text, scrollspeed=2):
+def sendText(side, half, colour, mode, text, scrollspeed=2, size = 1.5):
     print(readColour(side,half))
+    iSize = max(min(int(size * 64 ), 255),0)
     if len(colour) != 3:
         print("should have 3 parts of a colour have "+str(colour))
         return
     if side==1:
         reg_write(i2c, ADXL343_ADDR, RED+128*half, colour)
+        reg_write(i2c, ADXL343_ADDR, SIZE+128*half, iSize)
         reg_write(i2c, ADXL343_ADDR, STRLEN+128*half, len(text))
         reg_write(i2c, ADXL343_ADDR, STR+128*half, text)
         reg_write(i2c, ADXL343_ADDR, MODE+128*half, mode)
@@ -122,6 +125,7 @@ def sendText(side, half, colour, mode, text, scrollspeed=2):
         reg_write(i2c, ADXL343_ADDR, SCROLLPOS,0)
     elif side==2:
         reg_write(i2c1, ADXL343_ADDR, RED+128*half, colour)
+        reg_write(i2c1, ADXL343_ADDR, SIZE+128*half, iSize)
         reg_write(i2c1, ADXL343_ADDR, STRLEN+128*half, len(text))
         reg_write(i2c1, ADXL343_ADDR, STR+128*half, text)
         reg_write(i2c1, ADXL343_ADDR, MODE+128*half, mode)

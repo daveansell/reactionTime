@@ -28,7 +28,8 @@ const uint8_t RADIUS = 6;
 const uint8_t SCROLLPOS = 7;
 const uint8_t SCROLLSPEED = 8;
 const uint8_t STRLEN = 9;
-const uint8_t STR = 10;
+const uint8_t SIZE = 10;
+const uint8_t STR = 11;
 
 uint8_t halves[] = { 0, 127 };
 int32_t offsets[] = { 0,0};
@@ -125,6 +126,8 @@ int main() {
     char strings[2][128];
     int txtWidth = 0;
     int32_t scrollCounter[] = {0,0};
+    context.mem[SIZE] = 96;
+    context.mem[SIZE+128] = 96;
     while(true) {
 	for(uint8_t i=0; i<2; i++){
 		int o = 128 * i;
@@ -141,22 +144,23 @@ int main() {
 		if( i==0){
 			printf("Hello, %d %d-> %d %d %s %d->%d-%d\n",(int)context.mem[o+STR],(int)context.mem[o+STR+1], (int)strings[i][0], (int)strings[i][1], strings[i], offsets[i], scrollCounter[i], -txtWidth*2+hub75.width+(offsets[i]+hub75.width-txtWidth)%(hub75.width+txtWidth*2));
 		}
+		float textSize = (float)context.mem[o+SIZE] /64.0 ;
 		switch(context.mem[o+MODE]){
 			case MODE_BLANK:
 				break;
 			case MODE_LTEXT:
         			graphics.set_pen(context.mem[o+RED], context.mem[o+GREEN], context.mem[o+BLUE]);
-        			graphics.text(strings[i], Point(text_rect.x, y), text_rect.w, 1.5f);
+        			graphics.text(strings[i], Point(text_rect.x, y), text_rect.w, textSize );
 				break;
 			case MODE_RTEXT:
         			graphics.set_pen(context.mem[o+RED], context.mem[o+GREEN], context.mem[o+BLUE]);
-				txtWidth = graphics.measure_text(strings[i], 1.5);
-        			graphics.text(strings[i], Point(hub75.width - txtWidth, y), text_rect.w, 1.5f);
+				txtWidth = graphics.measure_text(strings[i], textSize);
+        			graphics.text(strings[i], Point(hub75.width - txtWidth, y), text_rect.w, textSize);
 				break;
 			case MODE_SCROLL:
-				txtWidth = graphics.measure_text(strings[i], 2.0f);
+				txtWidth = graphics.measure_text(strings[i], textSize);
 				graphics.set_pen(context.mem[o+RED], context.mem[o+GREEN], context.mem[o+BLUE]);
-				graphics.text(strings[i], Point(-txtWidth+(offsets[i]+hub75.width+txtWidth), y), 2000, 2.0f);
+				graphics.text(strings[i], Point(-txtWidth+(offsets[i]+hub75.width+txtWidth), y), 2000, textSize);
 //offsets[i] ++;
 				if(offsets[i] < - (hub75.width+txtWidth)){
 					offsets[i]=0;
