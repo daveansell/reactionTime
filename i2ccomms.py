@@ -44,18 +44,18 @@ i2c = machine.I2C(0,
                  # sda=machine.Pin(20),
                   scl=machine.Pin(13),
                   sda=machine.Pin(12),
-                  freq=100000)
+                  freq=50000)
 i2c1 = machine.I2C(1,
                  # scl=machine.Pin(21),
                  # sda=machine.Pin(20),
                   sda=machine.Pin(6),
                   scl=machine.Pin(7),
-                  freq=100000)
+                  freq=50000)
 
 ###############################################################################
 # Functions
-print(i2c.scan() )
-print(i2c1.scan())
+#print(i2c.scan() )
+#print(i2c1.scan())
 
 def reg_write(i2c, addr, reg, data):
     """
@@ -66,7 +66,7 @@ def reg_write(i2c, addr, reg, data):
     elif type(data) is str:
         msg = bytearray()
         msg.extend(data.encode())
-        print(str(reg)+" -- "+str(int(msg[0]))+" "+str(int(msg[1]))+"*"+str(msg)+"*")
+      #  print(str(reg)+" -- "+str(int(msg[0]))+" "+str(int(msg[1]))+"*"+str(msg)+"*")
     elif type(data) is list:
         msg=bytearray(data)
     else:
@@ -110,24 +110,27 @@ def readColour(side, half):
     else:
         return reg_read(i2c1, ADXL343_ADDR, RED+128*half, 3)
 def sendText(side, half, colour, mode, text, scrollspeed=2, size = 1.5):
-    print(readColour(side,half))
+    #print(readColour(side,half))
     iSize = max(min(int(size * 64 ), 255),0)
     if len(colour) != 3:
         print("should have 3 parts of a colour have "+str(colour))
         return
+    print("side="+str(side)+" half="+str(half)+" colour="+str(colour)+" mode="+str(mode)+" text="+str(text))
     if side==1:
         reg_write(i2c, ADXL343_ADDR, RED+128*half, colour)
         reg_write(i2c, ADXL343_ADDR, SIZE+128*half, iSize)
         reg_write(i2c, ADXL343_ADDR, STRLEN+128*half, len(text))
-        reg_write(i2c, ADXL343_ADDR, STR+128*half, text)
+        if len(text):
+            reg_write(i2c, ADXL343_ADDR, STR+128*half, text)
         reg_write(i2c, ADXL343_ADDR, MODE+128*half, mode)
         reg_write(i2c, ADXL343_ADDR, SCROLLSPEED+128*half, scrollspeed)
-        reg_write(i2c, ADXL343_ADDR, SCROLLPOS,0)
+        reg_write(i2c, ADXL343_ADDR, SCROLLPOS+128*half,0)
     elif side==2:
         reg_write(i2c1, ADXL343_ADDR, RED+128*half, colour)
         reg_write(i2c1, ADXL343_ADDR, SIZE+128*half, iSize)
         reg_write(i2c1, ADXL343_ADDR, STRLEN+128*half, len(text))
-        reg_write(i2c1, ADXL343_ADDR, STR+128*half, text)
+        if len(text):
+            reg_write(i2c1, ADXL343_ADDR, STR+128*half, text)
         reg_write(i2c1, ADXL343_ADDR, MODE+128*half, mode)
         reg_write(i2c1, ADXL343_ADDR, SCROLLSPEED+128*half, scrollspeed)
         reg_write(i2c1, ADXL343_ADDR, SCROLLPOS+128*half,0)
