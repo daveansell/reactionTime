@@ -27,7 +27,7 @@ FullResetInterval = 60000 # 1 minute1
 
 ScrollPause = 1 # Must be an int (these are counting loops not a specific time interval)
 
-DefaultLanguage = "English"
+DefaultLanguage = "Norwegian"
 scrolling_messageSoon = "Too early"
 scrolling_messageSlow = "Too slow"
 scrolling_messageVisualWait = "Press on green light"
@@ -67,12 +67,12 @@ def SetLanguage():
        #print ("Changing to Norwegian messages")
         scrolling_messageSoon = "For fort"
         scrolling_messageSlow = "For sakte"
-        scrolling_messageVisualWait = "Trykk på knappen når du får grønt lys"
-        scrolling_messageAudioWait = "Trykk på knappen etter tredje pipet"
-        scrolling_messageNewGame = "NorwegianNewGameMessage"
-        scrolling_messageNewVisual = "NorwegianNewVisualMessage"
-        scrolling_messageNewAudio = "NorwegianNewAudioMessage"
-        scrolling_messageTryAgain = "NorwegianTryAgainMessage"
+        scrolling_messageVisualWait = "Trykk ved grønt lys"
+        scrolling_messageAudioWait = "Trykk når det piper"
+        scrolling_messageNewGame = "Test reaksjonstida di"
+        scrolling_messageNewVisual = "Prøv med lys"
+        scrolling_messageNewAudio = "Prøv med lyd"
+        scrolling_messageTryAgain = "Prøv igjen"
         
 #Then actually change the currentscreen text...
         
