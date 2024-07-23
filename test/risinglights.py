@@ -6,8 +6,8 @@ import time
 LED_num = 10
     #Assume for now same number of LEDs on strips 1 and 2. 
 
-Strip1 = neopixel.NeoPixel(Pin(2), LED_num)
-Strip2 = neopixel.NeoPixel(Pin(3), LED_num)
+Strip1 = neopixel.NeoPixel(Pin(0), LED_num)
+Strip2 = neopixel.NeoPixel(Pin(4), LED_num)
 
 BRIGHTNESS = 1.0
 
@@ -20,9 +20,8 @@ def set_brightness(color):
     
         
 def StripsOff(Strip):
-    
-    # Display red
-    color = (0, 0, 0)  # Red color
+
+    color = (0, 0, 0) 
     color = set_brightness(color)
     Strip.fill(color)
     Strip.write()
@@ -54,10 +53,15 @@ def TooSoon(Strip):
 
 TooSoon(Strip1)
 time.sleep(5)
-brightness = 0
+
+StripsOff(Strip1)
+
+TooSoon(Strip2)
+time.sleep(5)
+StripsOff(Strip2)
+#brightness = 0
         #if React1Waiting == True:
-Strip1[0]=(0,brightness,0)
-Strip1.write()
+#Strip1[0]=(0,brightness,0)
 
 
 for i in range (10):
