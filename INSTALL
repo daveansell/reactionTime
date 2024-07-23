@@ -1,0 +1,14 @@
+copy 
+i2ccomms.py
+and 
+ReactionTimeCodeAV6.py
+onto pico
+
+Display interstate75 boards
+cd display-c
+mkdir build
+cd build
+cmake ..
+make
+
+display-c/reactionsDisplay.uf2 should be copied onto intestate75
