@@ -124,6 +124,8 @@ int main() {
     hub75.start(dma_complete);
     led.set_rgb(0,0,0);
     char strings[2][128];
+    strcpy(strings[0],"Hello");
+    strcpy(strings[1],"World");
     int txtWidth = 0;
     int32_t scrollCounter[] = {0,0};
     context.mem[SIZE] = 96;

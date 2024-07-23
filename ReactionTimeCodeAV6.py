@@ -17,7 +17,6 @@ reaction_time = 1000  # ms #Typical reaction time for an 85 year old is 1s
 wait_time = 3000  # ms Length of the ''ready' wait
 random_wait_short = 2000 # Shortest time for the 'steady' wait
 random_wait_long = 4000 # Longest time for the 'steady' wait
-Language = "English"
 
 celebration_time = 5000  # ms
 celebration_no_time_wait = 3000
@@ -36,6 +35,7 @@ scrolling_messageNewGame = "Test your reaction time"
 scrolling_messageNewVisual = "Now try a visual cue"
 scrolling_messageNewAudio = "Now try an audio cue"
 scrolling_messageTryAgain = "Try Again"
+Language = DefaultLanguage
 
 
 def SetLanguage():
