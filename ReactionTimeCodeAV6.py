@@ -67,10 +67,10 @@ def SetLanguage():
        #print ("Changing to Norwegian messages")
         scrolling_messageSoon = "For fort"
         scrolling_messageSlow = "For sakte"
-        scrolling_messageVisualWait = "Trykk ved grønt lys"
+        scrolling_messageVisualWait = "Trykk ved grønt lys "
         scrolling_messageAudioWait = "Trykk når det piper"
         scrolling_messageNewGame = "Test reaksjonstida di"
-        scrolling_messageNewVisual = "Prøv med lys"
+        scrolling_messageNewVisual = "Prøv med lys_"
         scrolling_messageNewAudio = "Prøv med lyd"
         scrolling_messageTryAgain = "Prøv igjen"
         
